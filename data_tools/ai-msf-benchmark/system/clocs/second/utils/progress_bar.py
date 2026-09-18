@@ -1,0 +1,194 @@
+# Copyright (c) 2025-2026 Huawei Technologies Co., Ltd.
+# This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+# CANN Open Software License Agreement Version 2.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+
+import enum
+import logging
+import math
+import sys
+import time
+
+import numpy as np
+from shared.parameters import bind_named as _bind_named
+
+LOGGER = logging.getLogger(__name__)
+
+
+def progress_str(val, *args, width=20, with_ptg=True):
+    val = max(0.0, min(val, 1.0))
+    if not (width > 1):
+        raise AssertionError
+    pos = round(width * val) - 1
+    if with_ptg:
+        log = "[{}%]".format(max_point_str(val * 100.0, 4))
+    log += "["
+    for i in range(width):
+        if i < pos:
+            log += "="
+        elif i == pos:
+            log += ">"
+        else:
+            log += "."
+    log += "]"
+    for arg in args:
+        log += "[{}]".format(arg)
+    return log
+
+
+def second_to_time_str(second, omit_hours_if_possible=True):
+    second = int(second)
+    m, s = divmod(second, 60)
+    h, m = divmod(m, 60)
+    if omit_hours_if_possible:
+        if h == 0:
+            return "{:02d}:{:02d}".format(m, s)
+    return "{:02d}:{:02d}:{:02d}".format(h, m, s)
+
+
+def _progress_bar_iter(*call_args, **call_kwargs):
+    (
+        task_list,
+        width,
+        with_ptg,
+        step_time_average,
+        name,
+        enumerate_items,
+    ) = _bind_named(
+        call_args,
+        call_kwargs,
+        ('task_list', 'width', 'with_ptg', 'step_time_average', 'name', 'enumerate_items'),
+    )
+    total_step = len(task_list)
+    step_times = []
+    start_time = 0.0
+    name = "" if name is None else f"[{name}]"
+    for i, task in enumerate(task_list):
+        t = time.time()
+        yield (i, task) if enumerate_items else task
+        step_times.append(time.time() - t)
+        start_time += step_times[-1]
+        start_time_str = second_to_time_str(start_time)
+        average_step_time = np.mean(step_times[-step_time_average:]) + 1e-6
+        speed_str = "{:.2f}it/s".format(1 / average_step_time)
+        remain_time = (total_step - i) * average_step_time
+        remain_time_str = second_to_time_str(remain_time)
+        time_str = start_time_str + ">" + remain_time_str
+        prog_str = progress_str(
+            (i + 1) / total_step, speed_str, time_str, width=width, with_ptg=with_ptg
+        )
+        LOGGER.info("%s", name + prog_str)
+    LOGGER.info("%s", "")
+
+
+def progress_bar_iter(
+    task_list, width=20, with_ptg=True, step_time_average=50, name=None
+):
+    return _progress_bar_iter(
+        task_list, width, with_ptg, step_time_average, name, False
+    )
+
+
+list_bar = progress_bar_iter
+
+
+def enumerate_bar(task_list, width=20, with_ptg=True, step_time_average=50, name=None):
+    return _progress_bar_iter(
+        task_list, width, with_ptg, step_time_average, name, True
+    )
+
+
+def max_point_str(val, max_point):
+    positive = bool(val >= 0.0)
+    val = np.abs(val)
+    if val == 0:
+        point = 1
+    else:
+        point = max(int(np.log10(val)), 0) + 1
+    fmt = "{:." + str(max(max_point - point, 0)) + "f}"
+    if positive:
+        return fmt.format(val)
+    else:
+        return fmt.format(-val)
+
+
+class Unit(enum.Enum):
+    Iter = "iter"
+    Byte = "byte"
+
+
+def convert_size(size_bytes):
+    # from https://stackoverflow.com/questions/5194057/better-way-to-convert-file-sizes-in-python
+    if size_bytes == 0:
+        return "0B"
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes / p, 2)
+    return s, size_name[i]
+
+
+class ProgressBar:
+    def __init__(
+        self, width=20, with_ptg=True, step_time_average=50, speed_unit=Unit.Iter
+    ):
+        self._width = width
+        self._with_ptg = with_ptg
+        self._step_time_average = step_time_average
+        self._step_times = []
+        self._start_time = 0.0
+        self._total_size = None
+        self._speed_unit = speed_unit
+        self._start = False
+        self._finished_sizes = []
+        self._time_elapsed = 0.0
+        self._current_time = 0.0
+        self._progress = 0
+
+    def start(self, total_size):
+        self._start = True
+        self._step_times = []
+        self._finished_sizes = []
+        self._time_elapsed = 0.0
+        self._current_time = time.time()
+        self._total_size = total_size
+        self._progress = 0
+
+    def print_bar(self, finished_size=1, pre_string=None, post_string=None):
+        self._step_times.append(time.time() - self._current_time)
+        self._finished_sizes.append(finished_size)
+        self._time_elapsed += self._step_times[-1]
+        start_time_str = second_to_time_str(self._time_elapsed)
+        time_per_size = np.array(self._step_times[-self._step_time_average:])
+        time_per_size /= np.array(self._finished_sizes[-self._step_time_average:])
+        average_step_time = np.mean(time_per_size) + 1e-6
+        if self._speed_unit == Unit.Iter:
+            speed_str = "{:.2f}it/s".format(1 / average_step_time)
+        elif self._speed_unit == Unit.Byte:
+            size, size_unit = convert_size(1 / average_step_time)
+            speed_str = "{:.2f}{}/s".format(size, size_unit)
+        else:
+            raise ValueError("unknown speed unit")
+        remain_time = (self._total_size - self._progress) * average_step_time
+        remain_time_str = second_to_time_str(remain_time)
+        time_str = start_time_str + ">" + remain_time_str
+        prog_str = progress_str(
+            (self._progress + 1) / self._total_size,
+            speed_str,
+            time_str,
+            width=self._width,
+            with_ptg=self._with_ptg,
+        )
+        self._progress += finished_size
+        if pre_string is not None:
+            prog_str = pre_string + prog_str
+        if post_string is not None:
+            prog_str += post_string
+        if self._progress >= self._total_size:
+            LOGGER.info("%s", prog_str + "   ")
+        else:
+            LOGGER.info("%s", prog_str)
+        self._current_time = time.time()

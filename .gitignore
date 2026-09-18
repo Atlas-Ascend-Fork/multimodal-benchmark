@@ -31,6 +31,28 @@ Thumbs.db
 *.onnx
 *.bin
 *.safetensors
+*.npy
+
+# Binary / compiled objects
+*.o
+*.obj
+
+# Media (large)
+*.avi
+*.mp4
+*.gif
+*.png
+*.jpg
+*.jpeg
+
+# PDF documents
+*.pdf
+
+# Third-party dependencies (download separately)
+**/3rd_parts/
+
+# Workflow runtime
+**/work/
 
 # AI tools
 .opencode/

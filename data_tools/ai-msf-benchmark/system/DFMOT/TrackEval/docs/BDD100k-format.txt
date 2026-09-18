@@ -1,0 +1,2 @@
+BDD100k dataset format description.
+See TrackEval documentation for details.

@@ -1,0 +1,59 @@
+# PyPTO Pro Workflow 统一配置
+# 所有配置集中在这一个文件，不再分散
+
+# ═══════════════════════════════════════════════════
+# 工作流控制
+# ═══════════════════════════════════════════════════
+workflow:
+  max_iterations: 20
+  recent_iterations_window: 5
+
+# ═══════════════════════════════════════════════════
+# Agent 配置
+# ═══════════════════════════════════════════════════
+agents:
+  cannbot:
+    cli: "/home/developer/.nvm/versions/node/v18.19.1/bin/cannbot"
+    # API key 配置在: /root/.config/opencode/opencode.jsonc
+    # 模型: glm-5.3-flash
+
+  kerminal:
+    cli: "/root/.local/bin/kerminal"
+    # API key 配置在: /root/.kerminal/config.toml
+    # 模型: kernelcat1.0
+
+  hermes:
+    cli: "/usr/local/bin/hermes"
+    # API key 和模型配置在: ~/.hermes/config.yaml
+    # 模型: glm-5.3-flash
+
+# ═══════════════════════════════════════════════════
+# 硬件
+# ═══════════════════════════════════════════════════
+hardware:
+  device_id: 0
+  # chip_model / soc_version / npu_arch 由 orchestrator 启动时自动检测
+  # 写入 <work>/device_info.json，注入到每个 stage 的 prompt 中
+  # 如需手动覆盖（如远程机器无法自动检测），取消注释以下字段：
+  # chip_model: "Ascend 950"
+  # soc_version: "Ascend910B4"
+  # npu_arch: "dav-3510"
+  # ai_core_num: 32
+  # ub_size_kb: 248
+  # l1_size_kb: 1024
+  # l0a_size_kb: 64
+  # l0b_size_kb: 64
+  # l0c_size_kb: 256
+
+# ═══════════════════════════════════════════════════
+# 路径
+# ═══════════════════════════════════════════════════
+paths:
+  cannbench_repo: "/workspace/workflow_mutilagent_operator_develop/cann-bench"
+
+# ═══════════════════════════════════════════════════
+# 日志
+# ═══════════════════════════════════════════════════
+logging:
+  level: "DEBUG"
+  console_level: "INFO"
