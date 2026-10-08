@@ -1,0 +1,10 @@
+work/
+output/
+build/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+test_*.py
+export_only_prof_dir/
