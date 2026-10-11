@@ -50,7 +50,7 @@ python orchestrator.py --task-dir /path/to/task \
   --max-iter 20
 ```
 
-**已验证算子**：fused_conv_sigmoid（v1: 4.56× 加速，v2: 真融合探索）、fused_conv_tanh（3.92× 加速），迭代示例见 `examples/` 目录。
+**已验证算子**：fused_conv_sigmoid（Cube-Vector 片上直传融合，2.87× 加速）、fused_conv_tanh（双 Kernel 流水融合，3.92× 加速）。
 
 详细文档：[ops_tools/workflow/pypto-pro-workflow/README.md](ops_tools/workflow/pypto-pro-workflow/README.md)
 
@@ -115,6 +115,18 @@ python -m corruption.main simulate_calib \
 各模块独立运行，使用方式参考模块内注释和示例。
 
 详细文档：[data_tools/image-noise-pattern/README.md](data_tools/image-noise-pattern/README.md)
+
+## 版本配套
+
+| 项目 | 版本 |
+|------|------|
+| 产品型号 | Atlas 800I A2 |
+| NPU 芯片 | Ascend 950 |
+| CANN 版本 | 9.1.0 |
+| 操作系统 | Ubuntu 24.04.3 LTS (x86_64) |
+| Python | >= 3.10（验证版本 3.12.3） |
+| Node.js | >= 18（验证版本 18.19.1，workflow 的 CANNBot 依赖） |
+| Kerminal | 0.8.12（workflow 的编译评测 Agent） |
 
 ## 目录结构
 
