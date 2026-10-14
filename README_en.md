@@ -120,7 +120,7 @@ Detailed documentation: [data_tools/image-noise-pattern/README.md](data_tools/im
 
 | Item | Version |
 |------|---------|
-| Product | Atlas 800I A2 |
+| Product | Ascend950PR |
 | NPU Chip | Ascend 950 |
 | CANN | 9.1.0 |
 | OS | Ubuntu 24.04.3 LTS (x86_64) |

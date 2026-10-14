@@ -120,7 +120,7 @@ python -m corruption.main simulate_calib \
 
 | 项目 | 版本 |
 |------|------|
-| 产品型号 | Atlas 800I A2 |
+| 产品型号 | Ascend950PR |
 | NPU 芯片 | Ascend 950 |
 | CANN 版本 | 9.1.0 |
 | 操作系统 | Ubuntu 24.04.3 LTS (x86_64) |
