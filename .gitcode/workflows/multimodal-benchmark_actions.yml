@@ -1,4 +1,4 @@
-name: PR-pipeline_multimodal-bench
+name: PR-pipeline_multimodal-benchmark
 
 concurrency:
   max: 5
