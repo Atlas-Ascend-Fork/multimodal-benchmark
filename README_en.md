@@ -1,4 +1,4 @@
-# multimodal-bench
+# multimodal-benchmark
 
 > CANN Multimodal-AI SIG — Tools & Benchmark Repository
 
@@ -7,8 +7,8 @@ Automated toolchain, data generation utilities, and evaluation benchmarks for mu
 ## Source Code Download
 
 ```bash
-git clone https://gitcode.com/cann/multimodal-bench.git
-cd multimodal-bench
+git clone https://gitcode.com/cann/multimodal-benchmark.git
+cd multimodal-benchmark
 ```
 
 ## Module Overview
@@ -131,7 +131,7 @@ Detailed documentation: [data_tools/image-noise-pattern/README.md](data_tools/im
 ## Directory Structure
 
 ```
-multimodal-bench/
+multimodal-benchmark/
 ├── ops_tools/                           # Operator-level tools
 │   ├── workflow/                        #   Multi-agent automated operator development framework
 │   │   └── pypto-pro-workflow/          #     orchestrator + agents + roles + knowledge

@@ -1,4 +1,4 @@
-# multimodal-bench
+# multimodal-benchmark
 
 > CANN Multimodal-AI SIG — 工具与评测层仓库
 
@@ -7,8 +7,8 @@
 ## 源码下载
 
 ```bash
-git clone https://gitcode.com/cann/multimodal-bench.git
-cd multimodal-bench
+git clone https://gitcode.com/cann/multimodal-benchmark.git
+cd multimodal-benchmark
 ```
 
 ## 模块概览
@@ -131,7 +131,7 @@ python -m corruption.main simulate_calib \
 ## 目录结构
 
 ```
-multimodal-bench/
+multimodal-benchmark/
 ├── ops_tools/                           # 算子级工具
 │   ├── workflow/                        #   多智能体算子自动开发框架
 │   │   └── pypto-pro-workflow/          #     orchestrator + agents + roles + knowledge
