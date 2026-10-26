@@ -1,0 +1,16 @@
+# Copyright (c) 2026 multimodal-bench contributors.
+# This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+# CANN Open Software License Agreement Version 2.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# op	repo	source_path	aclnn_type	dependency_paths	dependency_api_sources	expected_aclnn_symbols	kernel_options
+adaptive_avg_pool3d	nn	pooling/adaptive_avg_pool3d	aclnn_exclude	pooling/adaptive_pool3d_common	-	aclnnAdaptiveAvgPool3d	-
+expand_into_jagged_permute	nn	index/expand_into_jagged_permute	aclnn	-	-	aclnnExpandIntoJaggedPermute	-
+group_quant	nn	quant/group_quant	aclnn_exclude	-	-	aclnnGroupQuant	-
+logit	nn	loss/logit	aclnn	-	-	aclnnLogit	-
+group_norm_silu_quant	nn	norm/group_norm_silu_quant	aclnn_exclude	-	-	aclnnGroupNormSiluQuant	-
+gather_elements_v2	nn	index/gather_elements_v2	aclnn_exclude	-	index/gather_v2/op_api/gather_v2.cpp	aclnnGather	-
+chamfer_distance_grad	nn	loss/chamfer_distance_grad	aclnn_exclude	-	-	aclnnChamferDistanceBackward	-
+apply_rotary_pos_emb	transformer	posembedding/apply_rotary_pos_emb	aclnn_inner	-	-	aclnnApplyRotaryPosEmbV2	--cce-auto-sync=on,-Wno-deprecated-declarations,-Werror
