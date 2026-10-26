@@ -149,6 +149,7 @@ multimodal-benchmark/
 │   ├── metrics/                         #   评测指标
 │   ├── runners/                         #   评测执行器
 │   ├── baselines/                       #   基线数据
+│   ├── triton_bench/                    #   Triton 算子基准测试（待共建）
 │   └── reports/                         #   评测报告输出
 └── README.md
 ```
